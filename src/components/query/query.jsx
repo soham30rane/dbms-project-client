@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import JoinBlock from '../joinblock/joinblock';
+import ConditionBlock from '../conditionblock/conditionblock';
 
 const colorPairs = [
   { left: 'bg-blue-200', right: 'bg-purple-200' },
@@ -15,6 +16,9 @@ const conditionColors = [
 export default function Query({ query }) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [logicOp, setLogicOp] = useState(['','AND', 'OR','OR','OR','OR']);
+    const [leftvalue,setLeftvalue] = useState("")
+    const [rightvalue,setRightvalue] = useState("")
+    const [middlevalue,setMiddlevalue] = useState("")
 
     const toggleLogic = (index) => {
         setLogicOp(prev => {
@@ -48,11 +52,17 @@ export default function Query({ query }) {
                     <div className="mb-6">
                         <h3 className="text-sm font-semibold text-gray-700 mb-3">JOINS</h3>
                         <div className="space-y-2">
-                            {[0, 1,2,3,4,5].map((index) => (
+                            {[].map((index) => (
                                 <JoinBlock 
                                     key={index}
                                     leftColor={colorPairs[index % colorPairs.length].left}
                                     rightColor={colorPairs[index % colorPairs.length].right}
+                                    leftvalue={leftvalue}
+                                    rightvalue={rightvalue}
+                                    middlevalue={middlevalue}
+                                    setLeftvalue={setLeftvalue}
+                                    setRightvalue={setRightvalue}
+                                    setMiddleValue={setMiddlevalue}
                                 />
                             ))}
                             <button className="btn btn-sm btn-outline w-full mt-2">
@@ -65,7 +75,7 @@ export default function Query({ query }) {
                     <div className="mb-6">
                         <h3 className="text-sm font-semibold text-gray-700 mb-3">CONDITIONS</h3>
                         <div className="space-y-2">
-                            {[0,1,2,3,4,5].map((index) => (<>
+                            {[0,].map((index) => (<>
                                 {/* Logic Toggle Button */}
                                 {index>0?<div className="flex justify-center">
                                     <button 
@@ -77,14 +87,20 @@ export default function Query({ query }) {
                                         {logicOp[index]}
                                     </button>
                                 </div>:<></>}
-                                <JoinBlock 
+                                <ConditionBlock
                                     key={index}
                                     leftColor={conditionColors[index % conditionColors.length].left}
                                     rightColor={conditionColors[index % conditionColors.length].right}
-                                    isCondition
+                                    leftvalue={leftvalue}
+                                    rightvalue={rightvalue}
+                                    middlevalue={middlevalue}
+                                    setLeftvalue={setLeftvalue}
+                                    setRightvalue={setRightvalue}
+                                    setMiddleValue={setMiddlevalue}
                                 />
                                 </>
                             ))}
+                            
                             <button className="btn btn-sm btn-outline w-full mt-2">
                                 + Add Condition
                             </button>
