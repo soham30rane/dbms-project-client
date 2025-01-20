@@ -16,9 +16,35 @@ const conditionColors = [
 export default function Query({ query }) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [logicOp, setLogicOp] = useState(['','AND', 'OR','OR','OR','OR']);
-    const [leftvalue,setLeftvalue] = useState("")
-    const [rightvalue,setRightvalue] = useState("")
-    const [middlevalue,setMiddlevalue] = useState("")
+    // const [leftvalue,setLeftvalue] = useState("")
+    // const [rightvalue,setRightvalue] = useState("")
+    // const [middlevalue,setMiddlevalue] = useState("")
+
+    const [totalConditions,setTotalConditions] = useState(0)
+    const [totalJoins,setTotalJoins] = useState(0)
+
+    const [leftvalues,setLeftvalues] = useState([])
+    const [rightvalues,setRightvalues] = useState([])
+    const [middlevalues,setMiddlevalues] = useState([])
+
+    const setLeftvalue = (index,value) => {
+        const newLeftvalues = [...leftvalues];
+        newLeftvalues[index] = value;
+        setLeftvalues(newLeftvalues);
+    }
+
+    const setRightvalue = (index,value) => {
+        const newRightvalues = [...rightvalues];
+        newRightvalues[index] = value;
+        setRightvalues(newRightvalues);
+    }
+
+    const setMiddlevalue = (index,value) => {
+        const newMiddlevalues = [...middlevalues];
+        newMiddlevalues[index] = value;
+        setMiddlevalues(newMiddlevalues);
+    }
+
 
     const toggleLogic = (index) => {
         setLogicOp(prev => {
@@ -75,7 +101,7 @@ export default function Query({ query }) {
                     <div className="mb-6">
                         <h3 className="text-sm font-semibold text-gray-700 mb-3">CONDITIONS</h3>
                         <div className="space-y-2">
-                            {[0,].map((index) => (<>
+                            {leftvalues.map((_,index) => (<>
                                 {/* Logic Toggle Button */}
                                 {index>0?<div className="flex justify-center">
                                     <button 
@@ -91,12 +117,12 @@ export default function Query({ query }) {
                                     key={index}
                                     leftColor={conditionColors[index % conditionColors.length].left}
                                     rightColor={conditionColors[index % conditionColors.length].right}
-                                    leftvalue={leftvalue}
-                                    rightvalue={rightvalue}
-                                    middlevalue={middlevalue}
-                                    setLeftvalue={setLeftvalue}
-                                    setRightvalue={setRightvalue}
-                                    setMiddleValue={setMiddlevalue}
+                                    leftvalue={leftvalues[index]}
+                                    rightvalue={rightvalues[index]}
+                                    middlevalue={middlevalues[index]}
+                                    setLeftvalue={(value) => setLeftvalue(index,value)}
+                                    setRightvalue={(value) => setRightvalue(index,value)}
+                                    setMiddleValue={(value) => setMiddlevalue(index,value)}
                                 />
                                 </>
                             ))}
