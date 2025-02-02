@@ -4,6 +4,7 @@ export default function ConditionBlock({
     leftColor, rightColor,
     leftvalue, rightvalue, middlevalue,
     setLeftvalue, setRightvalue, setMiddleValue,
+    schema
 }) {
     const [showLeftMenu, setShowLeftMenu] = useState(false);
     const [showMiddleMenu, setShowMiddleMenu] = useState(false);
@@ -11,11 +12,11 @@ export default function ConditionBlock({
     const [showColumnPicker, setShowColumnPicker] = useState(false);
 
     // Sample data - will be replaced by props
-    const sampleTables = {
-        'Users': ['id (int)', 'name (varchar)', 'email (varchar)','email (varchar)','email (varchar)'],
-        'Orders': ['id (int)', 'user_id (int)', 'total (decimal)'],
-        'products': ['id (int)', 'user_id (int)', 'total (decimal)']
-    };
+    // const sampleTables = {
+    //     'Users': ['id (int)', 'name (varchar)', 'email (varchar)','email (varchar)','email (varchar)'],
+    //     'Orders': ['id (int)', 'user_id (int)', 'total (decimal)'],
+    //     'products': ['id (int)', 'user_id (int)', 'total (decimal)']
+    // };
 
     const operators = ['=', '>', '<', '>=', '<=', '<>', 'LIKE', 'IN', 'BETWEEN'];
 
@@ -28,7 +29,7 @@ export default function ConditionBlock({
                     className={`${leftColor} rounded-lg px-3 py-2 cursor-pointer 
                                hover:opacity-80 transition-opacity`}
                 >
-                    <div className="text-gray-700 text-sm truncate">
+                    <div className="text-gray-700 text-sm truncate text-right">
                         {leftvalue || "Select field"}
                     </div>
                 </div>
@@ -36,7 +37,7 @@ export default function ConditionBlock({
                 {showLeftMenu && (
                     <div className="absolute top-full left-0 mt-1 z-50 w-96">
                         <ul className="menu bg-base-200 rounded-box shadow-lg h-48 overflow-y-auto">
-                            {Object.entries(sampleTables).map(([table, columns]) => (
+                            {Object.entries(schema).map(([table, columns]) => (
                                 <li key={table}>
                                     <div className="font-medium text-gray-600 bg-gray-100 cursor-default px-4 py-2 select-none pointer-events-none">
                                         {table}
@@ -140,7 +141,7 @@ export default function ConditionBlock({
                     {showColumnPicker && (
                         <div className="absolute top-full left-0 mt-1 z-50 w-96">
                             <ul className="menu bg-base-200 rounded-box shadow-lg h-48 overflow-y-auto">
-                                {Object.entries(sampleTables).map(([table, columns]) => (
+                                {Object.entries(schema).map(([table, columns]) => (
                                     <li key={table}>
                                         <div className="font-medium text-gray-600 bg-gray-100 cursor-default px-4 py-2 select-none pointer-events-none">
                                             {table}

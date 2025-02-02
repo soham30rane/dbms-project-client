@@ -13,15 +13,62 @@ const conditionColors = [
   { left: 'bg-rose-200', right: 'bg-cyan-200' },
 ];
 
-export default function Query({ query }) {
+export default function Query({
+    schema
+}) {
     const [isExpanded, setIsExpanded] = useState(false);
+    const [description, setDescription] = useState('QUERY DESCRIPTION');
     const [logicOp, setLogicOp] = useState(['','AND', 'OR','OR','OR','OR']);
     // const [leftvalue,setLeftvalue] = useState("")
     // const [rightvalue,setRightvalue] = useState("")
     // const [middlevalue,setMiddlevalue] = useState("")
 
-    const [totalConditions,setTotalConditions] = useState(0)
-    const [totalJoins,setTotalJoins] = useState(0)
+
+    const addJoin = () => {
+        let newLeftvalues = [...leftvalues];
+        let newRightvalues = [...rightvalues];
+        let newMiddlevalues = [...middlevalues];
+        newLeftvalues.push('');
+        newRightvalues.push('');
+        newMiddlevalues.push('');
+        setLeftvalues(newLeftvalues);
+        setRightvalues(newRightvalues);
+        setMiddlevalues(newMiddlevalues);
+    }
+
+    const addCondition = () => {
+        let newLeftvalues = [...leftvaluesCond];
+        let newRightvalues = [...rightvaluesCond];
+        let newMiddlevalues = [...middlevaluesCond];
+        newLeftvalues.push('');
+        newRightvalues.push('');
+        newMiddlevalues.push('');
+        setLeftvaluesCond(newLeftvalues);
+        setRightvaluesCond(newRightvalues);
+        setMiddlevaluesCond(newMiddlevalues);
+    }
+
+    const [leftvaluesCond,setLeftvaluesCond] = useState([])
+    const [rightvaluesCond,setRightvaluesCond] = useState([])
+    const [middlevaluesCond,setMiddlevaluesCond] = useState([])
+
+    const setLeftvalueCond = (index,value) => {
+        const newLeftvalues = [...leftvaluesCond];
+        newLeftvalues[index] = value;
+        setLeftvaluesCond(newLeftvalues);
+    }
+
+    const setRightvalueCond = (index,value) => {
+        const newRightvalues = [...rightvaluesCond];
+        newRightvalues[index] = value;
+        setRightvaluesCond(newRightvalues);
+    }
+
+    const setMiddlevalueCond = (index,value) => {
+        const newMiddlevalues = [...middlevaluesCond];
+        newMiddlevalues[index] = value;
+        setMiddlevaluesCond(newMiddlevalues);
+    }
 
     const [leftvalues,setLeftvalues] = useState([])
     const [rightvalues,setRightvalues] = useState([])
@@ -45,7 +92,6 @@ export default function Query({ query }) {
         setMiddlevalues(newMiddlevalues);
     }
 
-
     const toggleLogic = (index) => {
         setLogicOp(prev => {
             const newLogic = [...prev];
@@ -59,12 +105,12 @@ export default function Query({ query }) {
             {/* Header Section */}
             <div className="p-4 border-b border-gray-100">
                 <div className="flex justify-between items-center">
-                    <p className="text-gray-600 truncate">{query.description || 'New Query'}</p>
+                    <p className="text-gray-600 truncate">{description || 'New Query'}</p>
                     <div className="space-x-2">
                         <button 
                             onClick={() => setIsExpanded(!isExpanded)}
                             className="btn btn-sm btn-ghost">
-                            {isExpanded ? 'Close' : 'Edit'}
+                            {isExpanded ? 'Save' : 'Edit'}
                         </button>
                         <button className="btn btn-sm btn-primary">Run</button>
                     </div>
@@ -78,20 +124,21 @@ export default function Query({ query }) {
                     <div className="mb-6">
                         <h3 className="text-sm font-semibold text-gray-700 mb-3">JOINS</h3>
                         <div className="space-y-2">
-                            {[].map((index) => (
+                            {leftvalues.map((_,index) => (
                                 <JoinBlock 
                                     key={index}
                                     leftColor={colorPairs[index % colorPairs.length].left}
                                     rightColor={colorPairs[index % colorPairs.length].right}
-                                    leftvalue={leftvalue}
-                                    rightvalue={rightvalue}
-                                    middlevalue={middlevalue}
-                                    setLeftvalue={setLeftvalue}
-                                    setRightvalue={setRightvalue}
-                                    setMiddleValue={setMiddlevalue}
+                                    leftvalue={leftvalues[index]}
+                                    rightvalue={rightvalues[index]}
+                                    middlevalue={middlevalues[index]}
+                                    setLeftvalue={(value) => setLeftvalue(index,value)}
+                                    setRightvalue={(value) => setRightvalue(index,value)}
+                                    setMiddleValue={(value) => setMiddlevalue(index,value)}
+                                    schema={schema}
                                 />
                             ))}
-                            <button className="btn btn-sm btn-outline w-full mt-2">
+                            <button className="btn btn-sm btn-outline w-full mt-2" onClick={addJoin}>
                                 + Add Join
                             </button>
                         </div>
@@ -101,7 +148,7 @@ export default function Query({ query }) {
                     <div className="mb-6">
                         <h3 className="text-sm font-semibold text-gray-700 mb-3">CONDITIONS</h3>
                         <div className="space-y-2">
-                            {leftvalues.map((_,index) => (<>
+                            {leftvaluesCond.map((_,index) => (<>
                                 {/* Logic Toggle Button */}
                                 {index>0?<div className="flex justify-center">
                                     <button 
@@ -117,17 +164,18 @@ export default function Query({ query }) {
                                     key={index}
                                     leftColor={conditionColors[index % conditionColors.length].left}
                                     rightColor={conditionColors[index % conditionColors.length].right}
-                                    leftvalue={leftvalues[index]}
-                                    rightvalue={rightvalues[index]}
-                                    middlevalue={middlevalues[index]}
-                                    setLeftvalue={(value) => setLeftvalue(index,value)}
-                                    setRightvalue={(value) => setRightvalue(index,value)}
-                                    setMiddleValue={(value) => setMiddlevalue(index,value)}
+                                    leftvalue={leftvaluesCond[index]}
+                                    rightvalue={rightvaluesCond[index]}
+                                    middlevalue={middlevaluesCond[index]}
+                                    setLeftvalue={(value) => setLeftvalueCond(index,value)}
+                                    setRightvalue={(value) => setRightvalueCond(index,value)}
+                                    setMiddleValue={(value) => setMiddlevalueCond(index,value)}
+                                    schema={schema}
                                 />
                                 </>
                             ))}
                             
-                            <button className="btn btn-sm btn-outline w-full mt-2">
+                            <button className="btn btn-sm btn-outline w-full mt-2" onClick={addCondition}>
                                 + Add Condition
                             </button>
                         </div>
@@ -138,7 +186,9 @@ export default function Query({ query }) {
                         <h3 className="text-sm font-semibold text-gray-700 mb-3">DESCRIPTION</h3>
                         <textarea 
                             className="w-full p-2 border rounded-lg resize-none h-24"
-                            placeholder="Enter query description..."
+                            // placeholder="Enter query description..."
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
                         />
                     </div>
                 </div>
