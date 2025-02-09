@@ -14,7 +14,8 @@ const conditionColors = [
 ];
 
 export default function Query({
-    schema
+    schema,
+    onRunQuery
 }) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [description, setDescription] = useState('QUERY DESCRIPTION');
@@ -100,6 +101,33 @@ export default function Query({
         });
     };
 
+    const buildQuery = () => {
+        const tablename = localStorage.getItem('tablename') || 'users';
+        // Build the query in string format according to existing state values
+        let query = 'SELECT * FROM ' + tablename + ' ';
+        for(let i=0; i<leftvalues.length; i++) {
+            if(leftvalues[i] === '' || rightvalues[i] === '' || middlevalues[i] === '') {
+                continue;
+            }
+            let otherTable = rightvalues[i].split('.')[0];
+            query += middlevalues[i] + ' ' + otherTable + ' ON ' + leftvalues[i] + ' = ' + rightvalues[i] + ' ';
+        }
+        if(leftvaluesCond.length > 0) {
+            query += 'WHERE ';
+        }
+        for(let i=0; i<leftvaluesCond.length; i++) {
+            if(leftvaluesCond[i] === '' || rightvaluesCond[i] === '' || middlevaluesCond[i] === '') {
+                continue;
+            }
+            if(i > 0) {
+                query += logicOp[i] + ' ';
+            }
+            query += leftvaluesCond[i] + ' ' + middlevaluesCond[i] + ' ' + rightvaluesCond[i] + ' ';
+        }
+        query += ';'
+        return query
+    }
+
     return (
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
             {/* Header Section */}
@@ -112,7 +140,7 @@ export default function Query({
                             className="btn btn-sm btn-ghost">
                             {isExpanded ? 'Save' : 'Edit'}
                         </button>
-                        <button className="btn btn-sm btn-primary">Run</button>
+                        <button className="btn btn-sm btn-primary" onClick={() => onRunQuery(buildQuery())}>Run</button>
                     </div>
                 </div>
             </div>
