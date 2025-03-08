@@ -45,7 +45,7 @@ const Dashboard = () => {
         console.log('Query failed:', response);
         data = await response.json();
         alert('Error: Query failed '+ data.error);
-        return;
+        return false;
         // throw new Error('Query failed');
       }
       
@@ -53,6 +53,7 @@ const Dashboard = () => {
       console.log('Query results:');
       console.log(results);
       updateTable(results);
+      return true;
     } catch (error) {
       console.error('Error:', error);
       throw error;
@@ -95,7 +96,11 @@ const Dashboard = () => {
       if (editId === -1) {
         const query = `INSERT INTO ${tablename} (${cols.join(',')}) VALUES ('${values.join("','")}');`;
         console.log(query);
-        await onRunQuery(query);
+        let success = await onRunQuery(query);
+
+        if(tablename === 'orders' && success){
+          await onRunQuery(`CALL update_stock_after_order(${data.product_id},${data.quantity});`);
+        }
       } else {
         const setValues = keys.map(key => `${key} = '${data[key]}'`);
         const query = `UPDATE ${tablename} SET ${setValues.join(',')} WHERE id = ${editId};`;
